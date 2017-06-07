@@ -1,18 +1,23 @@
-# Site-Administration
-Use the `omd` command to create/configure/destroy/start/stop/restart OMD sites.
+# Getting started
 
-```
-# sudo omd create <site-name>
-```
-
-A site with the name `ies` has already been created for you during provisioning.
-
-Let's go ahead and configure this site. In order to configure a site it has to be stopped, first:
-
-```
+```bash
+git clone https://github.com/baccenfutter/checkmk-vagrant
+cd checkmk-vagrant
+vagrant up
 vagrant ssh
-sudo omd stop ies
-sudo omd config ies
+```
+
+Once the Vagrant box has spun up successfully a new site must be created
+
+```bash
+sudo omd create <site-name>
+```
+
+Once a site has been created it can be configured.
+
+```
+sudo omd stop <site-name>
+sudo omd config <site-name>
 ```
 
 Under `Basic` choose the `Icinga` core as it has some improvements over the classic `Nagios` core.
@@ -20,13 +25,13 @@ Under `Basic` choose the `Icinga` core as it has some improvements over the clas
 Don't forget to restart the site:
 
 ```
-sudo omd start ies
+sudo omd start <site-name>
 ```
 
 Now that the site is configured and running, let's `su` into it:
 
 ```
-sudo omd su ies
+sudo omd su <site-name>
 omd status
 exit
 ```
@@ -38,9 +43,7 @@ sudo dpkg -i /opt/omd/versions/1.2.6p12.cre/share/check_mk/agents/check-mk-agent
 ```
 
 Now navigate to the web-ui of the checkmk-vagrant box. It will have received an address from your local DHCP server.
-`http://<ip>/ies/`
-
-    note: the trailing directory resembling the site's name.
+`http://<ip>/<site-name>/`
 
 The default credentials for OMD are:
 - username: omdadmin
@@ -57,8 +60,7 @@ In order to add a host:
 First, we need to navigate to the OMD site:
 
 ```
-vagrant ssh
-sudo omd su ies
+sudo omd su <site-name>
 ```
 
 To query localhost for all check results:
@@ -67,7 +69,7 @@ To query localhost for all check results:
 cmk -nv localhost
 ```
 
-In order totake a look at the site's monitoring configuration (hosts, services, etc)
+In order to take a look at the site's monitoring configuration (hosts, services, etc)
 
 ```
 cmk -D
@@ -121,7 +123,7 @@ chmod +x /usr/lib/check_mk_agent/plugins/coffee
 In the second step, we extend the server to inventorize and check the new `<<<coffee>>>` section.
 
 ```
-sudo omd su ies
+sudo omd su <site-name>
 cat <<EOF > local/share/check_mk/checks/coffee
 default_thresholds = 50, 25
 
